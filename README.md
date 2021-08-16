@@ -2,6 +2,14 @@
  
 This project has been created for whoever wants to troubleshoot O4O issues and doesn't yet have an application to do so.
 
+#NOTE!
+
+###### Please make sure that you're running the latest version of NPM, otherwise installing the dependencies will not work
+
+```
+npm install -g npm@latest
+```
+
 ## Installing dependencies
 
 ```
