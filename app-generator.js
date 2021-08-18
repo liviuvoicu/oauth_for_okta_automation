@@ -5,7 +5,7 @@ const va = require("./variables");
 const sleep = require("sleep");
 
 // Read the App's payload
-const data = fs.readFileSync("publicJWK.json", "utf8");
+const data = fs.readFileSync("AppRequest.json", "utf8");
 
 const createServiceApp = async () => {
   // Call the API to create the application
@@ -21,7 +21,7 @@ const createServiceApp = async () => {
   // Print and write response to App_API.json in order to get the client_id (will be modified in a future release)
   const rJSON = await createApp.json();
   console.log(rJSON);
-  fs.writeFileSync("App_API.json", JSON.stringify(rJSON, null, 2), {
+  fs.writeFileSync("AppResponse.json", JSON.stringify(rJSON, null, 2), {
     encoding: "utf8",
     flag: "w",
   });

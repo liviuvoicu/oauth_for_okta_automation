@@ -9,7 +9,7 @@ Keypairs.generate({
 }).then(function (pair) {
   // Write JSON payload to create the API Services app
   fs.writeFileSync(
-    "publicJWK.json",
+    "AppRequest.json",
     `{
         "client_name": "API Service App",
         "response_types": [
@@ -31,28 +31,50 @@ Keypairs.generate({
       flag: "w",
     }
   );
-  // Print the Private Key JWK
-  console.log(
-    `
-    /---PRIVATE JWK---/
-    `,
-    pair.private
+
+  console.log(`
+                     ______________________________________________________________
+                    |                                                              |
+                    | Private Key and Public Key have been generated successfully! |
+                    |______________________________________________________________|`);
+
+  // Writing the JWK Private Key
+  fs.writeFileSync(
+    "./keys/privateJWK.json",
+    JSON.stringify(pair.private, null, 2),
+    {
+      encoding: "utf8",
+      flag: "w",
+    }
   );
-  // Print the Public Key JWK
-  console.log(
-    `
-  /---PUBLIC JWK---/
-  `,
-    pair.public
+  // Writing the JWK Public Key
+  fs.writeFileSync(
+    "./keys/publicJWK.json",
+    JSON.stringify(pair.public, null, 2),
+    { encoding: "utf8", flag: "w" }
   );
 
   //JWK to PEM
-  return Keypairs.export({
-    jwk: pair.private,
-    format: "pkcs8",
-  }).then(function (pem) {
-    // Print the Private Key and write to file
-    console.log(pem);
-    fs.writeFileSync("private.key", pem, { encoding: "utf8", flag: "w" });
-  });
+  return (
+    Keypairs.export({
+      jwk: pair.private,
+      format: "pkcs8",
+    }).then(function (pem1) {
+      // Write the Private Key to private.key
+      fs.writeFileSync("./keys/privatePEM.key", pem1, {
+        encoding: "utf8",
+        flag: "w",
+      });
+    }),
+    Keypairs.export({
+      jwk: pair.public,
+      format: "pkcs1",
+    }).then(function (pem2) {
+      // Write the Public Key to public.key
+      fs.writeFileSync("./keys/publicPEM.key", pem2, {
+        encoding: "utf8",
+        flag: "w",
+      });
+    })
+  );
 });

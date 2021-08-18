@@ -1,10 +1,10 @@
-const app_response = require("./App_API.json");
+const app_response = require("./AppResponse.json");
 
 let variables = {
-  token: "API_TOKEN",
-  url: "https://{yourDomain}",
+  token: "API_TOKEN", // Security > API > Tokens
+  url: "OKTA_DOMAIN", // https://acme.okta.com
+  scope: "OAUTH_FOR_OKTA_SCOPE", // okta.users.read
   client_id: `${app_response["client_id"]}`,
-  scope: "O4O Scope",
 };
 
 exports.variables = variables;
