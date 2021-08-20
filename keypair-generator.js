@@ -1,6 +1,7 @@
 // Importing modules
 const Keypairs = require("keypairs");
 const fs = require("fs");
+const va = require("./variables");
 
 // Generate a new keypair as JWK
 Keypairs.generate({
@@ -11,7 +12,7 @@ Keypairs.generate({
   fs.writeFileSync(
     "AppRequest.json",
     `{
-        "client_name": "API Service App",
+        "client_name": "${va.variables.appName}",
         "response_types": [
             "token"
         ],
