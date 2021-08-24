@@ -1,53 +1,89 @@
 // Importing modules
-const Keypairs = require("keypairs");
-const fetch = require("node-fetch");
-const va = require("./variables");
-const private_keypair = require("./keys/privateJWK.json");
-
-//Variables to define in the JWT private Key
-const clientId = va.variables.client_id;
-const aud = `${va.variables.url}/oauth2/v1/token`; // audience
-
-// Creating the JWT Private Key
-return Keypairs.signJwt({
-  jwk: private_keypair,
-  iss: clientId,
-  exp: "5m",
-  claims: { aud: aud, sub: clientId },
-}).then(function (jwt) {
-  // Body of the request to the API Services app to get the Access Token
-  var rBody = {
-    grant_type: "client_credentials",
-    scope: `${va.variables.scope}`,
-    client_assertion_type:
-      "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-    client_assertion: jwt,
-  };
-
-  // URL Encoding the body
-  var formBody = [];
-  for (var property in rBody) {
-    var encodedKey = encodeURIComponent(property);
-    var encodedValue = encodeURIComponent(rBody[property]);
-    formBody.push(encodedKey + "=" + encodedValue);
-  }
-  formBody = formBody.join("&");
-
-  // Calling the API to get the Access Token
-  const fetchAPI = async () => {
-    const response = await fetch(
-      `${va.variables.url}/oauth2/v1/token?` + formBody,
-      {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
-        },
-      }
-    );
-    const rJSON = await response.json();
-    console.log(rJSON);
-  };
-  // Calling the above function (will remove later)
-  fetchAPI();
+const rl = require("readline").createInterface({
+  input: process.stdin,
+  output: process.stdout,
 });
+
+// Importing functions
+const keys = require("./src/keypair-generator/generator");
+const createApp = require("./src/app-generator/createApp");
+const scopeUpdate = require("./src/app-generator/scopeUpdate");
+const getToken = require("./src/access-token-generator/GetAccessToken");
+
+// Creating the UI
+const recursiveAsyncReadLine1 = function () {
+  rl.question(
+    `
+Please choose an action (numbers only):
+
+1. Generate RSA Keypair
+2. Application actions (Requires a generated keypair)
+3. Get an Access Token
+
+Option: `,
+    (option) => {
+      switch (option) {
+        // Generate the Keypairs
+        case "1":
+          keys.keypairGenerator();
+          setTimeout(function waitOneSecond() {
+            recursiveAsyncReadLine1();
+          }, 1000);
+          break;
+        // Application actions menu
+        case "2":
+          const recursiveAsyncReadLine2 = function () {
+            rl.question(
+              `
+Please choose an action (numbers only):
+
+1. Create App
+2. Grant a scope
+3. Back
+
+Option: `,
+              (option) => {
+                switch (option) {
+                  // Create the app
+                  case "1":
+                    rl.question(
+                      `Enter the name of your application: `,
+                      (name) => {
+                        createApp.createServiceApp(name);
+                        setTimeout(function waitSecond() {
+                          recursiveAsyncReadLine2();
+                        }, 1500);
+                      }
+                    );
+                  // Grant a scope
+                  case "2":
+                    rl.question(`Enter the scope to grant: `, (name) => {
+                      scopeUpdate.grantScope(name);
+                      setTimeout(function waitSecond() {
+                        recursiveAsyncReadLine2();
+                      }, 3500);
+                    });
+                  // Go to the main menu
+                  case "3":
+                    recursiveAsyncReadLine1();
+                }
+              }
+            );
+          };
+          // Calling the function to open the application actions menu
+          recursiveAsyncReadLine2();
+          break;
+        // Generate the Access Token
+        case "3":
+          rl.question(`Enter the scope to request: `, (name) => {
+            getToken.GetAccessToken(name);
+            setTimeout(function waitSecond() {
+              recursiveAsyncReadLine1();
+            }, 1500);
+          });
+      }
+    }
+  );
+};
+// Calling the function to open the main menu
+recursiveAsyncReadLine1();

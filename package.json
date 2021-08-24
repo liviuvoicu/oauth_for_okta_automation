@@ -1,7 +1,6 @@
 {
   "dependencies": {
     "keypairs": "^1.2.14",
-    "node-fetch": "^2.6.1",
-    "sleep": "^6.3.0"
+    "node-fetch": "^2.6.1"
   }
 }
