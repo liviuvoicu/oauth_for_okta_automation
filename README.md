@@ -2,7 +2,7 @@
  
 This project has been created for whoever wants to troubleshoot O4O issues and doesn't yet have an application to do so.
 
-#NOTE!
+## NOTE!
 
 ###### Please make sure that you're running the latest version of NPM, otherwise installing the dependencies will not work
 
@@ -16,28 +16,17 @@ npm install -g npm@latest
 npm install
 ```
 
-## Adding your environment
+## Setting up the required variables
 
-###### In the folder, there will be a 'variables.js' file. Please open it and edit the API Token, URL and scope variables for the script to work properly
+###### In the main folder, please edit the 'config.js' file, where you will need an API Token that you can create under **Security > API > Token**, as well as your base URL e.g: https://acme.okta.com
 
-## Creating the key pairs (RS256)
+## Running the application
 
-```
-node keypair-generator.js
-```
+###### 1) Run index.js with ```node index.js```. 
+###### 2) Generate the keypairs necessary to create the API Services application (You can also copy the public JWK under **/src/keypair-generator/keys** and use the JSON body to update an existing application in your end).
+###### 3) Create the application and enter a name for it
+###### 4) Grant a scope of your choice (Arrays of scopes are not yet supported in the script, but it will be added in the near future)
+###### 5) Get the Access Token
+###### 6) With Postman or any other program to call APIs (even cURL), use the Access Token received within the Authorization header of your request with the value ```Bearer {AccessToken}```
 
-## Creating the API Services App
-
-```
-node app-generator.js
-```
-
-## Creating the JWT Key and get the Access Token with the requested scope
-
-```
-node index.js
-```
-
-###### You can then run 'index.js' as many times as you want having the same scope. Additional scopes might either need for you to change the request method in 'app-generator.js' to PUT or by running the file to create a different application with a different scope.
-
-###### I'm aware of some bugs and issues, but this was made in a hurry in case anyone might need it soon.
+Some bugs may still be present, but once I have time, I'll go over the code to optimize the size of the script and optimize the code.
