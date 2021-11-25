@@ -3,7 +3,7 @@ const Keypairs = require("keypairs");
 const fetch = require("node-fetch");
 
 module.exports = {
-  GetAccessToken: function () {
+  GetAccessTokenO4O: function () {
     // Importing the Private Key to sign the JWT
     const private_keypair = require("../keypair-generator/keys/privateJWK.json");
     // Importing some variables needed for this to work (clientId and URL)
@@ -12,7 +12,7 @@ module.exports = {
 
     // Variables to define in the JWT private Key
     const clientId = app_response["client_id"];
-    const aud = `${cfg.config.url}/oauth2/default/v1/token`; // audience
+    const aud = `${cfg.config.url}/oauth2/v1/token`; // audience
 
     // Signing the JWT
     return Keypairs.signJwt({
@@ -41,8 +41,8 @@ module.exports = {
       // Calling the API to get the Access Token
       return new Promise(function(resolve) {
       const fetchAPI = async () => {
-        await fetch(
-          `${cfg.config.url}/oauth2/default/v1/token?` + formBody,
+        const response = await fetch(
+          `${cfg.config.url}/oauth2/v1/token?` + formBody,
           {
             method: "POST",
             headers: {
@@ -56,7 +56,7 @@ module.exports = {
         });
       };
       fetchAPI();
-      })
     });
-  },
+  });
+},
 };
