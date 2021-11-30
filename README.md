@@ -1,6 +1,6 @@
-# Oauth For Okta Automation Sample
+# OAuth For Okta Automation Sample
  
-This project has been created for whoever wants to troubleshoot O4O issues and doesn't yet have an application to do so.
+This project has been created for whoever wants to troubleshoot O4O (OAuth for Okta) issues and doesn't yet have an application to do so.
 
 ## NOTE!
 
@@ -27,6 +27,6 @@ npm install
 ###### 3) Create the application and enter a name for it
 ###### 4) Grant a scope of your choice (Arrays of scopes are not yet supported in the script, but it will be added in the near future)
 ###### 5) Get the Access Token
-###### 6) With Postman or any other program to call APIs (even cURL), use the Access Token received within the Authorization header of your request with the value ```Bearer {AccessToken}```
+###### 6) With Postman or any other application to call APIs (even cURL), use the Access Token received within the Authorization header of your request with the value ```Bearer {AccessToken}```
 
 Some bugs may still be present, but once I have time, I'll go over the code to optimize the size of the script and optimize the code.

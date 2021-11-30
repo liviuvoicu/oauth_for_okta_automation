@@ -1,43 +1,54 @@
 // Importing variables
 const cfg = require("../../config");
-const fetch = require("node-fetch");
+const https = require("https");
+
 module.exports = {
-  grantScope: async function (scope) {
-    const grantRequestFunc = () => {
-      // Importing the Response of the app creation API to get the clientId
+  grantScope: function (scope) {
       const rJSON = require("./AppResponse.json");
-      // Calling {url}/api/v1/apps/{clientId}/grants to grant a scope
-      fetch(`${cfg.config.url}/api/v1/apps/${rJSON["client_id"]}/grants`, {
-        method: "POST",
+
+      let data = JSON.stringify({
+        scopeId: scope,
+        issuer: cfg.config.url.includes('https') ? cfg.config.url : 'https://'.concat(cfg.config.url)
+      })
+
+      const options = {
+        hostname: cfg.config.url.includes('https') ? cfg.config.url.split('//')[1] : cfg.config.url,
+        port: 443,
+        path: `/api/v1/apps/${rJSON["client_id"]}/grants`,
+        method: 'POST',
         headers: {
-          Accept: "application/json",
+          "Accept": "application/json",
           "Content-Type": "application/json",
-          Authorization: `SSWS ${cfg.config.token}`,
+          "Authorization": `SSWS ${cfg.config.token}`,
           "Cache-Control": "no-cache",
-        },
-        body: `{
-        "scopeId": "${scope}",
-        "issuer": "${cfg.config.url}"
-    }`,
-      }).then(function (response) {
-        switch (response.status) {
-          case 200:
-            console.log(`
-${scope} has been successfully granted.
-            `);
-            break;
-          case 400:
-            console.log(
-              `
-The scope doesn't exist or it has already been granted.
-              `
-            );
-            break;
         }
-      });
-    };
-    setTimeout(function wait() {
-      grantRequestFunc();
-    }, 1500);
-  },
+      }
+
+      return new Promise(function(resolve, reject) {
+      const req = https.request(options, res => {
+        let dataQueue = '';
+          res.on('data', (d) => {
+            dataQueue += d
+            if(res.statusCode == 200) {
+              console.log('\x1b[32m%s\x1b[0m',`
+${scope} has been successfully granted.
+              `);
+              } else {
+                console.log('\x1b[31m%s\x1b[0m',
+                  `
+The scope doesn't exist or it has already been granted.
+                  `
+                );
+              };
+              resolve(res);
+          });
+          req.on('error', error => {
+            reject(error);
+          });
+
+          })
+      req.write(data);
+      req.end();
+    });
+  }
 };

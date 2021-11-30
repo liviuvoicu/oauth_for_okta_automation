@@ -6,6 +6,7 @@ const path = require("path");
 // Generate a new keypair as JWK
 module.exports = {
   keypairGenerator: function () {
+    return new Promise(function(resolve) {
     Keypairs.generate({
       kty: "RSA",
       modulusLength: 2048,
@@ -17,7 +18,7 @@ module.exports = {
                     |______________________________________________________________|
                     
                   `);
-
+      
       // Writing the JWK Private Key
       fs.writeFileSync(
         path.resolve(__dirname, "./keys/privateJWK.json"),
@@ -33,6 +34,7 @@ module.exports = {
         JSON.stringify(pair.public, null, 2),
         { encoding: "utf8", flag: "w" }
       );
+      resolve("Done")
 
       //JWK to PEM
       return (
@@ -64,7 +66,8 @@ module.exports = {
             }
           );
         })
-      );
+      ); 
     });
+  })
   },
 };
